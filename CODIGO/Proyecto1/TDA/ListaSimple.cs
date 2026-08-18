@@ -41,5 +41,18 @@
         {
             return primero;
         }
+
+        public void MarcarEnIndice(int indice, T valor)
+        {
+            if (indice < 0 || indice >= longitud)
+                throw new IndexOutOfRangeException("Indice fuera de rango en ListaSimple");
+
+            Nodo<T> actual = primero;
+            for (int i = 0; i < indice; i++)
+                actual = actual.Siguiente;
+
+            actual.Dato = valor;
+        }
+
     }
 }

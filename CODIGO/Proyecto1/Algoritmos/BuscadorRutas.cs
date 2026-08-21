@@ -6,8 +6,6 @@ namespace Proyecto1.Algoritmos
 {
     public class BuscadorRutas
     {
-        // Nodo interno del BFS: guarda la celda, la capacidad restante (solo aplica a Fighter)
-        // y el padre, para reconstruir el camino al final.
         private class NodoRuta
         {
             public Celda Celda;
@@ -25,8 +23,6 @@ namespace Proyecto1.Algoritmos
         private static readonly int[] DeltaFila = { -1, 1, 0, 0 };
         private static readonly int[] DeltaColumna = { 0, 0, -1, 1 };
 
-        // ---------- MISION DE RESCATE ----------
-        // No puede pasar por celdas Militares bajo ninguna circunstancia.
         public ListaSimple<Celda> BuscarRutaRescate(Ciudad ciudad, Celda entrada, Celda civilObjetivo)
         {
             ListaSimple<ListaSimple<bool>> visitado = CrearMatrizVisitados(ciudad);
@@ -34,7 +30,7 @@ namespace Proyecto1.Algoritmos
 
             NodoRuta inicio = new NodoRuta(entrada, 0, null);
             cola.Encolar(inicio);
-            visitado.ObtenerEn(entrada.Fila).ObtenerEn(entrada.Columna); // no-op, solo referencia
+            visitado.ObtenerEn(entrada.Fila).ObtenerEn(entrada.Columna);
             MarcarVisitado(visitado, entrada.Fila, entrada.Columna);
 
             while (!cola.EstaVacia)
@@ -54,23 +50,18 @@ namespace Proyecto1.Algoritmos
 
                     Celda vecina = ciudad.ObtenerCelda(nf, nc);
 
-                    bool esTransitable = vecina.Tipo == TipoCelda.Camino
-                                       || vecina.Tipo == TipoCelda.Entrada
-                                       || vecina.Tipo == TipoCelda.Civil;
+                    bool esTransitable = vecina.Tipo == TipoCelda.Camino || vecina.Tipo == TipoCelda.Entrada || vecina.Tipo == TipoCelda.Civil;
 
-                    if (!esTransitable) continue; // Militar y Recurso quedan bloqueados para rescate
+                    if (!esTransitable) continue;
 
                     MarcarVisitado(visitado, nf, nc);
                     cola.Encolar(new NodoRuta(vecina, 0, actual));
                 }
             }
 
-            return null; // Mision Imposible
+            return null;
         }
 
-        // ---------- MISION DE EXTRACCION ----------
-        // Puede pasar por Militares si capacidadActual > capacidad de la unidad militar,
-        // y en ese caso resta esa capacidad al robot.
         public ListaSimple<Celda> BuscarRutaExtraccion(Ciudad ciudad, Celda entrada, Celda recursoObjetivo,
                                                          int capacidadInicial, out int capacidadFinal)
         {
@@ -106,12 +97,12 @@ namespace Proyecto1.Algoritmos
                         continue;
 
                     if (vecina.Tipo == TipoCelda.Recurso && vecina != recursoObjetivo)
-                        continue; // un recurso que no es el objetivo no se puede pisar
+                        continue;
 
                     if (vecina.Tipo == TipoCelda.Militar)
                     {
                         if (actual.CapacidadActual <= vecina.CapacidadMilitar)
-                            continue; // no la puede vencer, camino bloqueado por aqui
+                            continue;
                         capacidadTrasMover = actual.CapacidadActual - vecina.CapacidadMilitar;
                     }
 
@@ -121,10 +112,9 @@ namespace Proyecto1.Algoritmos
             }
 
             capacidadFinal = 0;
-            return null; // Mision Imposible
+            return null;
         }
 
-        // ---------- HELPERS ----------
         private ListaSimple<Celda> ReconstruirCamino(NodoRuta destino)
         {
             ListaSimple<Celda> invertido = new ListaSimple<Celda>();
@@ -157,7 +147,6 @@ namespace Proyecto1.Algoritmos
 
         private void MarcarVisitado(ListaSimple<ListaSimple<bool>> matriz, int fila, int columna)
         {
-            // ListaSimple no tiene "SetEn", asi que reconstruimos la fila con el valor actualizado.
             ListaSimple<bool> filaLista = matriz.ObtenerEn(fila);
             filaLista.MarcarEnIndice(columna, true);
         }

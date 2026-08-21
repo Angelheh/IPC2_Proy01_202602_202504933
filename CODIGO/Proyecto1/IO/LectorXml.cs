@@ -77,7 +77,12 @@ namespace Proyecto1.IO
                 celda.CapacidadMilitar = capacidad;
             }
 
+            Ciudad existente = Ciudades.BuscarPorCondicion(c => c.Nombre == ciudad.Nombre);
+            if (existente != null)
+                Ciudades.EliminarPorCondicion(c => c.Nombre == ciudad.Nombre);
+
             Ciudades.Agregar(ciudad);
+
         }
 
         private TipoCelda InterpretarCaracter(char c)
@@ -110,7 +115,12 @@ namespace Proyecto1.IO
                 robot = new ChapinRescue(nombre);
             }
 
+            Robot existente = Robots.BuscarPorCondicion(r => r.Nombre == robot.Nombre);
+            if (existente != null)
+                Robots.EliminarPorCondicion(r => r.Nombre == robot.Nombre);
+
             Robots.Agregar(robot);
+
         }
 
     }

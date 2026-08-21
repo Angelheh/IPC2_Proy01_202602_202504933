@@ -54,5 +54,42 @@
             actual.Dato = valor;
         }
 
+        public T BuscarPorCondicion(Func<T, bool> condicion)
+        {
+            Nodo<T> actual = primero;
+            while (actual != null)
+            {
+                if (condicion(actual.Dato))
+                    return actual.Dato;
+                actual = actual.Siguiente;
+            }
+            return default(T);
+        }
+
+        public void EliminarPorCondicion(Func<T, bool> condicion)
+        {
+            Nodo<T> actual = primero;
+            Nodo<T> anterior = null;
+
+            while (actual != null)
+            {
+                if (condicion(actual.Dato))
+                {
+                    if (anterior == null)
+                        primero = actual.Siguiente;
+                    else
+                        anterior.Siguiente = actual.Siguiente;
+
+                    if (actual == ultimo)
+                        ultimo = anterior;
+
+                    longitud--;
+                    return;
+                }
+                anterior = actual;
+                actual = actual.Siguiente;
+            }
+        }
+
     }
 }

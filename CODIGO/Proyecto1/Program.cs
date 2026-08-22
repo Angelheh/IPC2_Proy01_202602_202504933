@@ -1,5 +1,6 @@
 ﻿using Proyecto1.Algoritmos;
 using Proyecto1.IO;
+using Proyecto1.Reportes;
 
 LectorXml lector = new LectorXml();
 lector.CargarArchivo("ConfigPrueba.xml");
@@ -28,3 +29,8 @@ Console.WriteLine("\nRuta de extraccion (capacidad final: " + capacidadFinal + "
 if (rutaExtraccion == null) Console.WriteLine("Mision Imposible");
 else for (int i = 0; i < rutaExtraccion.Longitud; i++)
     Console.Write("(" + rutaExtraccion.ObtenerEn(i).Fila + "," + rutaExtraccion.ObtenerEn(i).Columna + ") ");
+
+var generador = new GeneradorGraphviz();
+string dotRescate = generador.GenerarDot(ciudad, rutaRescate);
+generador.GuardarDot(dotRescate, "rutaRescate.dot");
+Console.WriteLine("\nArchivo .dot generado: rutaRescate.dot");

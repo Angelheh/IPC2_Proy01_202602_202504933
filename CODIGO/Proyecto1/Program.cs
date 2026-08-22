@@ -28,9 +28,17 @@ var rutaExtraccion = buscador.BuscarRutaExtraccion(ciudad, entrada, recurso, 50,
 Console.WriteLine("\nRuta de extraccion (capacidad final: " + capacidadFinal + "):");
 if (rutaExtraccion == null) Console.WriteLine("Mision Imposible");
 else for (int i = 0; i < rutaExtraccion.Longitud; i++)
-    Console.Write("(" + rutaExtraccion.ObtenerEn(i).Fila + "," + rutaExtraccion.ObtenerEn(i).Columna + ") ");
+Console.WriteLine("(" + rutaExtraccion.ObtenerEn(i).Fila + "," + rutaExtraccion.ObtenerEn(i).Columna + ") ");
 
 var generador = new GeneradorGraphviz();
 string dotRescate = generador.GenerarDot(ciudad, rutaRescate);
-generador.GuardarDot(dotRescate, "rutaRescate.dot");
-Console.WriteLine("\nArchivo .dot generado: rutaRescate.dot");
+
+string carpetaHistorial = "Historial";
+Directory.CreateDirectory(carpetaHistorial);
+
+string marcaTiempo = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+string nombreBase = carpetaHistorial + "/reporte_rescate_" + ciudad.Nombre + "_" + marcaTiempo;
+
+generador.GuardarDot(dotRescate, nombreBase + ".dot");
+generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
+Console.WriteLine("Reporte generado: " + nombreBase + ".png");

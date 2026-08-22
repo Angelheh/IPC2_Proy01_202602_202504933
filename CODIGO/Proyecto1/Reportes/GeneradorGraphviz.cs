@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Proyecto1.TDA;
 using Proyecto1.Modelo;
+using System.Diagnostics;
 
 namespace Proyecto1.Reportes
 {
@@ -59,5 +60,25 @@ namespace Proyecto1.Reportes
         {
             System.IO.File.WriteAllText(rutaArchivo, contenidoDot);
         }
+
+        public void GenerarImagen(string rutaDot, string rutaSalidaPng)
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.FileName = "dot";
+            info.Arguments = "-Tpng \"" + rutaDot + "\" -o \"" + rutaSalidaPng + "\"";
+            info.UseShellExecute = false;
+            info.CreateNoWindow = true;
+            info.RedirectStandardError = true;
+
+            using (Process proceso = Process.Start(info))
+            {
+                string error = proceso.StandardError.ReadToEnd();
+                proceso.WaitForExit();
+
+                if (proceso.ExitCode != 0)
+                    throw new Exception("Error al generar imagen con Graphviz: " + error);
+            }
+        }
+
     }
 }

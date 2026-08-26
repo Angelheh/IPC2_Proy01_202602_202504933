@@ -58,6 +58,12 @@ namespace Proyecto1.UI
             Console.Write("Ingrese el nombre del archivo XML (debe estar en la carpeta del ejecutable): ");
             string nombreArchivo = Console.ReadLine();
 
+            if (string.IsNullOrWhiteSpace(nombreArchivo))
+            {
+                Console.WriteLine("Debe ingresar un nombre de archivo.");
+                return;
+            }
+
             try
             {
                 lector.CargarArchivo(nombreArchivo);
@@ -82,7 +88,10 @@ namespace Proyecto1.UI
             for (int i = 0; i < lector.Robots.Longitud; i++)
             {
                 var r = lector.Robots.ObtenerEn(i);
-                Console.WriteLine("  - " + r.Nombre + " (" + r.GetType().Name + ")");
+                if (r is ChapinFighter fighter)
+                    Console.WriteLine("  - " + r.Nombre + " (ChapinFighter, Capacidad: " + fighter.Capacidad + ")");
+                else
+                    Console.WriteLine("  - " + r.Nombre + " (ChapinRescue)");
             }
         }
 
@@ -203,6 +212,14 @@ namespace Proyecto1.UI
             Console.WriteLine("\nTipo de mision: rescate");
             Console.WriteLine("Unidad civil rescatada: " + (civilObjetivo.Fila + 1) + "," + (civilObjetivo.Columna + 1));
             Console.WriteLine("Robot utilizado: " + robotElegido.Nombre);
+            Console.Write("Ruta seguida: ");
+            for (int i = 0; i < camino.Longitud; i++)
+            {
+                Celda c = camino.ObtenerEn(i);
+                Console.Write("(" + (c.Fila + 1) + "," + (c.Columna + 1) + ")");
+                if (i < camino.Longitud - 1) Console.Write(" -> ");
+            }
+            Console.WriteLine();
 
             var generador = new GeneradorGraphviz();
             string dotContenido = generador.GenerarDot(ciudad, camino);
@@ -334,9 +351,16 @@ namespace Proyecto1.UI
 
             Console.WriteLine("\nTipo de mision: extraccion de recursos");
             Console.WriteLine("Recurso extraido: " + (recursoObjetivo.Fila + 1) + "," + (recursoObjetivo.Columna + 1));
-            Console.WriteLine("Robot utilizado: " + robotElegido.Nombre +
-                " (ChapinFighter - Capacidad de combate inicial " + robotElegido.Capacidad +
-                ", Capacidad de combate final " + capacidadFinal + ")");
+            Console.WriteLine("Robot utilizado: " + robotElegido.Nombre + " (ChapinFighter - Capacidad de combate inicial " + robotElegido.Capacidad + ", Capacidad de combate final " + capacidadFinal + ")");
+            Console.Write("Ruta seguida: ");
+            for (int i = 0; i < camino.Longitud; i++)
+            {
+                Celda c = camino.ObtenerEn(i);
+                Console.Write("(" + (c.Fila + 1) + "," + (c.Columna + 1) + ")");
+                if (i < camino.Longitud - 1) Console.Write(" -> ");
+            }
+
+            Console.WriteLine();
 
             var generador = new GeneradorGraphviz();
             string dotContenido = generador.GenerarDot(ciudad, camino);

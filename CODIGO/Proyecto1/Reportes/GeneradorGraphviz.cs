@@ -51,7 +51,7 @@ namespace Proyecto1.Reportes
                 case TipoCelda.Camino: return "white";
                 case TipoCelda.Militar: return "red";
                 case TipoCelda.Civil: return "dodgerblue";
-                case TipoCelda.Recurso: return "gray";
+                case TipoCelda.Recurso: return "dimgray";
                 default: return "white";
             }
         }

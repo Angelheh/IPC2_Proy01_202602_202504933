@@ -54,7 +54,7 @@ namespace Proyecto1.IO
             foreach (XElement nodoFila in nodoCiudad.Elements("fila"))
             {
                 int numeroFila = int.Parse(nodoFila.Attribute("numero").Value) - 1;
-                string contenido = nodoFila.Value;
+                string contenido = nodoFila.Value.Trim('"');
 
                 ListaSimple<Celda> filaLista = ciudad.Malla.ObtenerEn(numeroFila);
                 for (int col = 0; col < contenido.Length; col++)

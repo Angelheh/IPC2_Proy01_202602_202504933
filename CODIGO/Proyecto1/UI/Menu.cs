@@ -97,7 +97,7 @@ namespace Proyecto1.UI
             if (tipo == "1")
                 EjecutarRescate();
             else if (tipo == "2")
-                Console.WriteLine("Pendiente: extraccion");
+                EjecutarExtraccion();
             else
                 Console.WriteLine("Opcion invalida.");
         }
@@ -172,7 +172,24 @@ namespace Proyecto1.UI
                 Console.WriteLine("Esta ciudad no tiene puntos de entrada.");
                 return;
             }
-            Celda entrada = entradas.ObtenerEn(0);
+            Celda entrada;
+            if (entradas.Longitud == 1)
+            {
+                entrada = entradas.ObtenerEn(0);
+            }
+            else
+            {
+                Console.WriteLine("\n--- Puntos de entrada en " + ciudad.Nombre + " ---");
+                for (int i = 0; i < entradas.Longitud; i++)
+                {
+                    Celda e = entradas.ObtenerEn(i);
+                    Console.WriteLine((i + 1) + ". Fila " + (e.Fila + 1) + ", Columna " + (e.Columna + 1));
+                }
+
+                int indiceEntrada = LeerOpcionNumerica(entradas.Longitud);
+                if (indiceEntrada == -1) return;
+                entrada = entradas.ObtenerEn(indiceEntrada);
+            }
 
             var buscador = new BuscadorRutas();
             var camino = buscador.BuscarRutaRescate(ciudad, entrada, civilObjetivo);
@@ -213,6 +230,125 @@ namespace Proyecto1.UI
             }
 
             return opcion - 1;
+        }
+
+        private void EjecutarExtraccion()
+            {
+
+            var ciudadesConRecursos = lector.Ciudades.FiltrarPorCondicion(c => c.ObtenerCeldasPorTipo(TipoCelda.Recurso).Longitud > 0);
+
+            if (ciudadesConRecursos.EstaVacia)
+            {
+                Console.WriteLine("No hay ciudades con recursos disponibles.");
+                return;
+            }
+
+            Console.WriteLine("\n--- Ciudades disponibles para extraccion ---");
+            for (int i = 0; i < ciudadesConRecursos.Longitud; i++)
+                Console.WriteLine((i + 1) + ". " + ciudadesConRecursos.ObtenerEn(i).Nombre);
+
+            int indiceCiudad = LeerOpcionNumerica(ciudadesConRecursos.Longitud);
+            if (indiceCiudad == -1) return;
+            Ciudad ciudad = ciudadesConRecursos.ObtenerEn(indiceCiudad);
+
+            var fighters = lector.Robots.FiltrarPorCondicion(r => r is ChapinFighter);
+            if (fighters.EstaVacia)
+            {
+                Console.WriteLine("No hay robots ChapinFighter disponibles.");
+                return;
+            }
+
+            ChapinFighter robotElegido;
+            if (fighters.Longitud == 1)
+            {
+                robotElegido = (ChapinFighter)fighters.ObtenerEn(0);
+            }
+            else
+            {
+                Console.WriteLine("\n--- Robots ChapinFighter disponibles ---");
+                for (int i = 0; i < fighters.Longitud; i++)
+                {
+                    ChapinFighter f = (ChapinFighter)fighters.ObtenerEn(i);
+                    Console.WriteLine((i + 1) + ". " + f.Nombre + " (Capacidad: " + f.Capacidad + ")");
+                }
+
+                int indiceRobot = LeerOpcionNumerica(fighters.Longitud);
+                if (indiceRobot == -1) return;
+                robotElegido = (ChapinFighter)fighters.ObtenerEn(indiceRobot);
+            }
+
+            var recursos = ciudad.ObtenerCeldasPorTipo(TipoCelda.Recurso);
+            Celda recursoObjetivo;
+            if (recursos.Longitud == 1)
+            {
+                recursoObjetivo = recursos.ObtenerEn(0);
+            }
+            else
+            {
+                Console.WriteLine("\n--- Recursos en " + ciudad.Nombre + " ---");
+                for (int i = 0; i < recursos.Longitud; i++)
+                {
+                    Celda r = recursos.ObtenerEn(i);
+                    Console.WriteLine((i + 1) + ". Fila " + (r.Fila + 1) + ", Columna " + (r.Columna + 1));
+                }
+
+                int indiceRecurso = LeerOpcionNumerica(recursos.Longitud);
+                if (indiceRecurso == -1) return;
+                recursoObjetivo = recursos.ObtenerEn(indiceRecurso);
+            }
+
+            var entradas = ciudad.ObtenerCeldasPorTipo(TipoCelda.Entrada);
+            if (entradas.EstaVacia)
+            {
+                Console.WriteLine("Esta ciudad no tiene puntos de entrada.");
+                return;
+            }
+            Celda entrada;
+            if (entradas.Longitud == 1)
+            {
+                entrada = entradas.ObtenerEn(0);
+            }
+            else
+            {
+                Console.WriteLine("\n--- Puntos de entrada en " + ciudad.Nombre + " ---");
+                for (int i = 0; i < entradas.Longitud; i++)
+                {
+                    Celda e = entradas.ObtenerEn(i);
+                    Console.WriteLine((i + 1) + ". Fila " + (e.Fila + 1) + ", Columna " + (e.Columna + 1));
+                }
+
+                int indiceEntrada = LeerOpcionNumerica(entradas.Longitud);
+                if (indiceEntrada == -1) return;
+                entrada = entradas.ObtenerEn(indiceEntrada);
+            }
+
+            var buscador = new BuscadorRutas();
+            int capacidadFinal;
+            var camino = buscador.BuscarRutaExtraccion(ciudad, entrada, recursoObjetivo, robotElegido.Capacidad, out capacidadFinal);
+
+            if (camino == null)
+            {
+                Console.WriteLine("\nMision Imposible");
+                return;
+            }
+
+            Console.WriteLine("\nTipo de mision: extraccion de recursos");
+            Console.WriteLine("Recurso extraido: " + (recursoObjetivo.Fila + 1) + "," + (recursoObjetivo.Columna + 1));
+            Console.WriteLine("Robot utilizado: " + robotElegido.Nombre +
+                " (ChapinFighter - Capacidad de combate inicial " + robotElegido.Capacidad +
+                ", Capacidad de combate final " + capacidadFinal + ")");
+
+            var generador = new GeneradorGraphviz();
+            string dotContenido = generador.GenerarDot(ciudad, camino);
+
+            string carpetaHistorial = "Historial";
+            Directory.CreateDirectory(carpetaHistorial);
+            string marcaTiempo = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string nombreBase = carpetaHistorial + "/reporte_extraccion_" + ciudad.Nombre + "_" + marcaTiempo;
+
+            generador.GuardarDot(dotContenido, nombreBase + ".dot");
+            generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
+            Console.WriteLine("Reporte generado: " + nombreBase + ".png");
         }
 
     }

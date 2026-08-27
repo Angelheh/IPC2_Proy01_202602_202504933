@@ -91,5 +91,18 @@
             }
         }
 
+        public ListaSimple<T> FiltrarPorCondicion(Func<T, bool> condicion)
+        {
+            ListaSimple<T> resultado = new ListaSimple<T>();
+            Nodo<T> actual = primero;
+            while (actual != null)
+            {
+                if (condicion(actual.Dato))
+                    resultado.Agregar(actual.Dato);
+                actual = actual.Siguiente;
+            }
+            return resultado;
+        }
+
     }
 }

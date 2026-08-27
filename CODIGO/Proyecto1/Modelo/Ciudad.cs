@@ -22,5 +22,21 @@ namespace Proyecto1.Modelo
             ListaSimple<Celda> filaLista = Malla.ObtenerEn(fila);
             return filaLista.ObtenerEn(columna);
         }
+
+        public ListaSimple<Celda> ObtenerCeldasPorTipo(TipoCelda tipo)
+        {
+            ListaSimple<Celda> resultado = new ListaSimple<Celda>();
+            for (int f = 0; f < Filas; f++)
+            {
+                for (int c = 0; c < Columnas; c++)
+                {
+                    Celda celda = ObtenerCelda(f, c);
+                    if (celda.Tipo == tipo)
+                        resultado.Agregar(celda);
+                }
+            }
+            return resultado;
+        }
+
     }
 }

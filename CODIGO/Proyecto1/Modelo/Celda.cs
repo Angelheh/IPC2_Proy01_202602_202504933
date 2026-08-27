@@ -15,7 +15,7 @@
         public int Fila { get; set; }
         public int Columna { get; set; }
         public TipoCelda Tipo { get; set; }
-        public int CapacidadMilitar { get; set; } // solo aplica si Tipo == Militar
+        public int CapacidadMilitar { get; set; }
 
         public Celda(int fila, int columna, TipoCelda tipo)
         {

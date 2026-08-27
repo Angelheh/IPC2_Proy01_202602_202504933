@@ -230,8 +230,18 @@ namespace Proyecto1.UI
             string nombreBase = carpetaHistorial + "/reporte_rescate_" + ciudad.Nombre + "_" + marcaTiempo;
 
             generador.GuardarDot(dotContenido, nombreBase + ".dot");
-            generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
-            Console.WriteLine("Reporte generado: " + nombreBase + ".png");
+            Console.WriteLine("Archivo .dot generado: " + nombreBase + ".dot");
+
+            try
+            {
+                generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
+                Console.WriteLine("Reporte generado: " + nombreBase + ".png");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("No se pudo generar la imagen automaticamente (verifique que Graphviz este instalado y en el PATH).");
+                Console.WriteLine("El archivo .dot fue generado correctamente y puede visualizarse en https://dreampuf.github.io/GraphvizOnline/");
+            }
         }
 
         private int LeerOpcionNumerica(int cantidadOpciones)
@@ -371,8 +381,18 @@ namespace Proyecto1.UI
             string nombreBase = carpetaHistorial + "/reporte_extraccion_" + ciudad.Nombre + "_" + marcaTiempo;
 
             generador.GuardarDot(dotContenido, nombreBase + ".dot");
-            generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
-            Console.WriteLine("Reporte generado: " + nombreBase + ".png");
+            Console.WriteLine("Archivo .dot generado: " + nombreBase + ".dot");
+
+            try
+            {
+                generador.GenerarImagen(nombreBase + ".dot", nombreBase + ".png");
+                Console.WriteLine("Reporte generado: " + nombreBase + ".png");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("No se pudo generar la imagen automaticamente (verifique que Graphviz este instalado y en el PATH).");
+                Console.WriteLine("El archivo .dot fue generado correctamente y puede visualizarse en https://dreampuf.github.io/GraphvizOnline/");
+            }
         }
 
     }
